@@ -1,0 +1,25 @@
+version: 0.2
+phases:
+  install:
+    commands:
+      # Install all dependencies (including dependencies for running tests)
+      - npm install
+  pre_build:
+    commands:
+      # Discover and run unit tests in the '__tests__' directory
+      - npm run test
+      # Remove all dependencies not needed for the Lambda deployment package (the packages from devDependencies in package.json)
+      - npm prune --production
+  build:
+    commands:
+      # Use AWS SAM to package the application by using AWS CloudFormation
+      - sam deploy
+      - sam deploy --no-confirm-changeset --no-fail-on-empty-changeset
+artifacts:
+  files:
+    - template-export.yml
+    - app.js
+    - index.html
+    - package.json
+    - node_modules/async/*
+    - node_modules/lodash/*
